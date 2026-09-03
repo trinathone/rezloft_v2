@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rezloft — Stop Chasing Jobs. Let Jobs Chase You.</title>
+<meta name="description" content="Rezloft auto-applies to thousands of Easy Apply jobs on Dice.com — 24/7. Built for C2C contractors, OPT consultants, and job seekers who want inbound calls.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f5f4f0; color: #1a1a2e; line-height: 1.65; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* ── Scroll animations ──────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.08s; }
+.reveal-d2 { transition-delay: 0.18s; }
+.reveal-d3 { transition-delay: 0.28s; }
+.reveal-d4 { transition-delay: 0.38s; }
+
+/* ── Layout ─────────────────────────────────────────────── */
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+.wrap-sm { max-width: 700px; margin: 0 auto; padding: 0 28px; }
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn-dark {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #1a1a2e; color: #fff;
+  font-size: 0.9rem; font-weight: 600; font-family: inherit;
+  padding: 13px 26px; border-radius: 999px; border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.18s, box-shadow 0.18s;
+}
+.btn-dark:hover { background: #2e2e50; transform: scale(1.03); box-shadow: 0 6px 22px rgba(26,26,46,0.22); }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: transparent; color: #1a1a2e;
+  font-size: 0.9rem; font-weight: 600; font-family: inherit;
+  padding: 12px 26px; border-radius: 999px;
+  border: 1.8px solid #1a1a2e; cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.18s;
+}
+.btn-outline:hover { background: #1a1a2e; color: #fff; transform: scale(1.03); }
+
+/* ── Navbar ─────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 16px 0;
+  transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(245,244,240,0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700; font-size: 1.25rem; letter-spacing: -0.01em; color: #1a1a2e;
+}
+.nav-links { display: flex; align-items: center; gap: 30px; }
+.nav-links a { font-size: 0.875rem; font-weight: 500; color: #555; transition: color 0.2s; }
+.nav-links a:hover { color: #1a1a2e; }
+.nav-cta .btn-dark { padding: 10px 20px; font-size: 0.85rem; }
+.hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; flex-direction: column; gap: 5px; }
+.hamburger span { display: block; width: 22px; height: 2px; background: #1a1a2e; border-radius: 2px; transition: all 0.3s; }
+
+/* ── Hero ───────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  background: linear-gradient(170deg, #9dcfe8 0%, #b8ddf0 22%, #cde8f5 42%, #dff0f9 60%, #eef6fb 78%, #f5f4f0 100%);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  padding: 140px 28px 90px;
+  position: relative; overflow: hidden;
+}
+#hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 25%, rgba(255,255,255,0.55) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.72); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 999px; padding: 7px 16px;
+  font-size: 0.78rem; font-weight: 700; color: #444;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  margin-bottom: 30px;
+  animation: heroFade 0.6s ease both;
+}
+@keyframes heroFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#hero h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.8rem, 7vw, 5.2rem);
+  font-weight: 700; line-height: 1.08; letter-spacing: -0.025em;
+  color: #1a1a2e; margin-bottom: 24px;
+  animation: heroFade 0.6s ease 0.1s both;
+}
+#hero h1 em { font-style: italic; }
+#hero p {
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  color: #4a5568; max-width: 560px; margin: 0 auto 38px;
+  animation: heroFade 0.6s ease 0.2s both;
+}
+.hero-btns {
+  display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+  animation: heroFade 0.6s ease 0.3s both;
+}
+
+/* ── Stats ──────────────────────────────────────────────── */
+#stats { background: #fff; border-top: 1px solid #e8e8e8; border-bottom: 1px solid #e8e8e8; padding: 0; }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  max-width: 1080px; margin: 0 auto;
+}
+.stat-box { text-align: center; padding: 44px 20px; border-right: 1px solid #e8e8e8; }
+.stat-box:last-child { border-right: none; }
+.stat-num {
+  display: block;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 700; color: #1a1a2e; letter-spacing: -0.03em;
+  line-height: 1; margin-bottom: 8px;
+}
+.stat-label { font-size: 0.78rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; }
+
+/* ── Section badge ──────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.73rem; font-weight: 700; color: #555;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.badge-star { color: #2563eb; }
+
+/* ── How It Works ───────────────────────────────────────── */
+#how { padding: 96px 0; }
+#how .head { text-align: center; margin-bottom: 52px; }
+#how h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+  color: #1a1a2e; line-height: 1.2;
+}
+#how h2 em { font-style: italic; }
+.how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.how-card {
+  background: #fff; border-radius: 20px; border: 1px solid #ebebeb;
+  padding: 36px 28px; text-align: center;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.how-card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(0,0,0,0.1); }
+.how-icon { font-size: 2.2rem; margin-bottom: 16px; display: block; }
+.how-card h3 { font-family: Georgia, serif; font-size: 1.15rem; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; }
+.how-card p { font-size: 0.875rem; color: #666; line-height: 1.7; }
+
+/* ── Why / Magnet ───────────────────────────────────────── */
+#why {
+  margin: 0 28px 96px; border-radius: 28px;
+  background: linear-gradient(155deg, #7fbfe0 0%, #a4d2ed 30%, #c2e3f5 60%, #80bedd 100%);
+  padding: 80px 60px; text-align: center; overflow: hidden; position: relative;
+}
+#why::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(255,255,255,0.4) 0%, transparent 70%);
+  pointer-events: none;
+}
+#why .inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+#why .badge { color: rgba(255,255,255,0.85); justify-content: center; }
+#why h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700;
+  color: #fff; line-height: 1.15; margin-bottom: 22px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.1);
+}
+#why h2 em { font-style: italic; }
+#why p { font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.75; max-width: 580px; margin: 0 auto; }
+
+/* ── Who It's For ───────────────────────────────────────── */
+#who { padding: 0 0 96px; }
+#who .head { text-align: center; margin-bottom: 14px; }
+#who h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+  color: #1a1a2e; line-height: 1.2;
+}
+#who h2 em { font-style: italic; }
+#who .sub { text-align: center; font-size: 0.95rem; color: #666; margin-bottom: 44px; max-width: 540px; margin-left: auto; margin-right: auto; }
+.who-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.who-card {
+  background: #fff; border-radius: 20px; border: 1px solid #ebebeb;
+  padding: 32px 28px; display: flex; gap: 18px; align-items: flex-start;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.who-card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(0,0,0,0.1); }
+.who-emoji { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+.who-card h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 7px; }
+.who-card p { font-size: 0.855rem; color: #666; line-height: 1.65; }
+
+/* ── FAQ ────────────────────────────────────────────────── */
+#faq { padding: 0 0 96px; }
+#faq .head { text-align: center; margin-bottom: 48px; }
+#faq h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+  color: #1a1a2e; line-height: 1.2;
+}
+#faq h2 em { font-style: italic; }
+.faq-list { display: flex; flex-direction: column; gap: 10px; }
+.faq-item {
+  background: #fff; border-radius: 16px; border: 1px solid #ebebeb;
+  overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+}
+.faq-item:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 20px 24px; cursor: pointer;
+  font-weight: 600; font-size: 0.93rem; color: #1a1a2e;
+  user-select: none;
+}
+.faq-arrow {
+  width: 28px; height: 28px; flex-shrink: 0;
+  background: #f0f0f0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; color: #555;
+  transition: transform 0.3s ease, background 0.2s;
+}
+.faq-item.open .faq-arrow { transform: rotate(180deg); background: #1a1a2e; color: #fff; }
+.faq-a {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  font-size: 0.875rem; color: #555; line-height: 1.75;
+  padding: 0 24px;
+}
+.faq-item.open .faq-a { max-height: 300px; padding: 0 24px 20px; }
+
+/* ── CTA ────────────────────────────────────────────────── */
+#cta {
+  margin: 0 28px 80px; border-radius: 28px;
+  background: linear-gradient(155deg, #9dcfe8 0%, #b8ddf0 35%, #cce5f5 65%, #7fbfe0 100%);
+  padding: 80px 60px; text-align: center; position: relative; overflow: hidden;
+}
+#cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255,255,255,0.45) 0%, transparent 70%);
+  pointer-events: none;
+}
+#cta .inner { position: relative; z-index: 1; }
+#cta h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 700;
+  color: #fff; line-height: 1.15; margin-bottom: 16px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.1);
+}
+#cta h2 em { font-style: italic; }
+#cta p { color: rgba(255,255,255,0.88); font-size: 1rem; margin-bottom: 36px; max-width: 460px; margin-left: auto; margin-right: auto; }
+#cta .btn-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #1a1a2e; color: #fff;
+  font-size: 0.95rem; font-weight: 700; font-family: inherit;
+  padding: 15px 32px; border-radius: 999px; border: none; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: background 0.2s, transform 0.18s, box-shadow 0.18s;
+}
+#cta .btn-cta:hover { background: #2e2e50; transform: scale(1.04); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer { padding: 44px 0 36px; border-top: 1px solid #e0e0e0; }
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.footer-logo { font-family: Georgia, serif; font-weight: 700; font-size: 1.05rem; color: #1a1a2e; }
+.footer-copy { font-size: 0.8rem; color: #aaa; }
+.footer-links { display: flex; gap: 20px; align-items: center; }
+.footer-links a { font-size: 0.82rem; font-weight: 500; color: #777; transition: color 0.2s; }
+.footer-links a:hover { color: #1a1a2e; }
+
+/* ── Mobile menu ────────────────────────────────────────── */
+.mobile-overlay {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.45);
+}
+.mobile-overlay.open { display: block; }
+.mobile-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 78%; max-width: 300px;
+  background: #fff; z-index: 301; padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 4px;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  box-shadow: -4px 0 32px rgba(0,0,0,0.12);
+}
+.mobile-drawer.open { transform: translateX(0); }
+.drawer-close { align-self: flex-end; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #1a1a2e; margin-bottom: 16px; line-height: 1; }
+.mobile-drawer a { display: block; font-size: 1rem; font-weight: 600; color: #1a1a2e; padding: 13px 0; border-bottom: 1px solid #f0f0f0; }
+.mobile-drawer .btn-dark { margin-top: 20px; justify-content: center; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .how-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-box:nth-child(2) { border-right: none; }
+  .stat-box:nth-child(3) { border-top: 1px solid #e8e8e8; }
+  #why, #cta { padding: 60px 32px; margin: 0 16px 64px; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  #hero { padding: 120px 20px 70px; }
+  #hero h1 { font-size: 2.6rem; }
+  .who-grid { grid-template-columns: 1fr; }
+  .how-grid { grid-template-columns: 1fr; }
+  #why, #cta { margin: 0 12px 64px; border-radius: 20px; }
+  .footer-inner { flex-direction: column; text-align: center; gap: 14px; }
+  .footer-links { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .hero-btns { flex-direction: column; align-items: stretch; }
+  .hero-btns a { text-align: center; justify-content: center; }
+  #how, #who, #faq { padding-left: 0; padding-right: 0; }
+  #why, #cta { padding: 48px 22px; }
+  .who-card { flex-direction: column; gap: 10px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ───────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="wrap nav-inner">
+    <a href="#" class="nav-logo">Rezloft</a>
+    <div class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#stats">Results</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="https://linkedin.com/in/neverest" target="_blank" style="font-size:0.85rem;font-weight:600;color:#0a66c2;display:inline-flex;align-items:center;gap:5px;margin-right:10px;">in LinkedIn</a>
+      <a href="https://github.com/trinathone/rezloft" class="btn-dark">Download Free →</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile -->
+<div class="mobile-overlay" id="overlay" onclick="closeMobile()"></div>
+<div class="mobile-drawer" id="drawer">
+  <button class="drawer-close" onclick="closeMobile()">✕</button>
+  <a href="#how" onclick="closeMobile()">How It Works</a>
+  <a href="#stats" onclick="closeMobile()">Results</a>
+  <a href="#faq" onclick="closeMobile()">FAQ</a>
+  <a href="https://t.me/+rz7W7lhhUEkwOTM1" onclick="closeMobile()">💬 Join Community</a>
+  <a href="https://github.com/trinathone/rezloft" class="btn-dark" onclick="closeMobile()">Download Free →</a>
+</div>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-tag">⭐ OPEN SOURCE · FREE FOREVER</div>
+    <h1>Stop Chasing Jobs.<br>Let Jobs <em>Chase You.</em></h1>
+    <p>Rezloft auto-applies to thousands of jobs on Dice.com — automatically. Real employers find you with real roles. No ghost jobs.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/trinathone/rezloft" class="btn-dark" id="github">Download Free on GitHub →</a>
+      <a href="https://t.me/+rz7W7lhhUEkwOTM1" class="btn-outline">💬 Join Community</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ─────────────────────────────────────────────── -->
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-box reveal">
+      <span class="stat-num" data-target="8202">0</span>
+      <span class="stat-label">Applications Submitted</span>
+    </div>
+    <div class="stat-box reveal reveal-d1">
+      <span class="stat-num" data-target="10">0</span>
+      <span class="stat-label">Days Running</span>
+    </div>
+    <div class="stat-box reveal reveal-d2">
+      <span class="stat-num" data-target="9976" data-suffix="%" data-decimal="2">0</span>
+      <span class="stat-label">Success Rate</span>
+    </div>
+    <div class="stat-box reveal reveal-d3">
+      <span class="stat-num" data-target="0">0</span>
+      <span class="stat-label">Bot Detections</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── How It Works ──────────────────────────────────────── -->
+<section id="how">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="badge"><span class="badge-star">★</span> HOW IT WORKS</div>
+      <h2>Three steps. Then <em>your phone rings.</em></h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-card reveal reveal-d1">
+        <span class="how-icon">🔍</span>
+        <h3>Search</h3>
+        <p>Bot searches your keywords on Dice.com automatically — cycling through your list, paginating every result, rotating keywords when exhausted.</p>
+      </div>
+      <div class="how-card reveal reveal-d2">
+        <span class="how-icon">💉</span>
+        <h3>Inject</h3>
+        <p>Auto-applies to every matching Easy Apply posting. Walks multi-step forms, submits — never applies to the same job twice.</p>
+      </div>
+      <div class="how-card reveal reveal-d3">
+        <span class="how-icon">📞</span>
+        <h3>Receive</h3>
+        <p>Employers with real roles find your resume in their own ATS and call you directly. You respond to real inbound calls only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Why It Works ──────────────────────────────────────── -->
+<div id="why">
+  <div class="inner">
+    <div class="badge reveal"><span>✦</span>&nbsp;WHY IT WORKS</div>
+    <h2 class="reveal">Your Resume. <em>Everywhere.</em></h2>
+    <p class="reveal reveal-d1">Most people apply to 10 jobs carefully and wait. Rezloft gets your resume into thousands of employer ATS systems. When a real role comes in, employers search their own database — your resume surfaces. You only respond to real inbound calls. No more ghost jobs.</p>
+  </div>
+</div>
+
+<!-- ── Who It's For ───────────────────────────────────────── -->
+<section id="who">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="badge"><span class="badge-star">★</span> WHO IT'S FOR</div>
+      <h2>Built for every <em>job seeker</em></h2>
+    </div>
+    <p class="sub reveal">Whether you're hunting W2, C2C, or contract — Rezloft works for any resume, any job type.</p>
+    <div class="who-grid">
+      <div class="who-card reveal reveal-d1">
+        <span class="who-emoji">💼</span>
+        <div>
+          <h3>C2C Contractors</h3>
+          <p>Auto-apply to thousands of jobs, get inbound corp-to-corp calls without cold outreach.</p>
+        </div>
+      </div>
+      <div class="who-card reveal reveal-d2">
+        <span class="who-emoji">👔</span>
+        <div>
+          <h3>Full-Time Job Seekers</h3>
+          <p>Auto-apply to hundreds of W2 positions daily and let recruiters find you instead of the other way around.</p>
+        </div>
+      </div>
+      <div class="who-card reveal reveal-d1">
+        <span class="who-emoji">🎓</span>
+        <div>
+          <h3>OPT / H1B Consultants</h3>
+          <p>Maximize job visibility while on bench. Get in front of every C2C-friendly employer on Dice.</p>
+        </div>
+      </div>
+      <div class="who-card reveal reveal-d2">
+        <span class="who-emoji">🏢</span>
+        <div>
+          <h3>Bench Sales Recruiters</h3>
+          <p>Market multiple consultants simultaneously at scale. Manage pipelines across dozens of profiles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────── -->
+<section id="faq">
+  <div class="wrap-sm">
+    <div class="head reveal">
+      <div class="badge"><span class="badge-star">★</span> FAQ</div>
+      <h2>Common <em>questions</em></h2>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Will Dice ban my account?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">Bot runs at 250–300/day with 20 layers of anti-detection — Bezier mouse curves, human typing simulation, canvas fingerprint noise, WebGL spoofing, and rotating viewports. Running since April 2026 with zero blocks across 8,202 applications.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-d1">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Is my Dice password safe?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">100% yes. Everything runs locally on YOUR machine. No servers. No data collection. No cloud. Code is fully open source — verify it yourself line by line on GitHub. Your credentials never leave your computer.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-d2">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Does it work on Windows and Mac?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">Yes. Python + Playwright runs on both. The setup wizard guides you through every step with zero technical knowledge needed — it takes under 3 minutes. Full separate instructions for Windows and Mac in START_HERE.md.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-d3">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What keywords should I use?
+          <span class="faq-arrow">▾</span>
+        </div>
+        <div class="faq-a">Ask ChatGPT or Claude: "Give me 30 Dice.com C2C job search keywords for a [your role] engineer with skills in [your skills]. One per line, no bullets." Then paste into keywords.txt. The setup wizard prompts you with this exact question.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ───────────────────────────────────────────────── -->
+<div id="cta">
+  <div class="inner reveal">
+    <h2>Ready to Let Jobs <em>Chase You?</em></h2>
+    <p>Free forever. No accounts. No subscriptions. Just download and run.</p>
+    <a href="https://github.com/trinathone/rezloft" class="btn-cta">Download Free on GitHub →</a>
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────── -->
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-logo">Rezloft — Free &amp; Open Source</div>
+    <div class="footer-copy">GPL v3 License</div>
+    <div class="footer-links">
+      <a href="https://github.com/trinathone/rezloft">GitHub</a>
+      <a href="https://linkedin.com/in/neverest" target="_blank" style="color:#0a66c2;font-weight:600;">in LinkedIn</a>
+      <a href="https://t.me/+rz7W7lhhUEkwOTM1">💬 Telegram</a>
+      <a href="mailto:trinath.connect@proton.me">📧 Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Navbar scroll effect ────────────────────────────────
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// ── Mobile menu ─────────────────────────────────────────
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+});
+function closeMobile() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── Scroll reveal ────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Stats counter ────────────────────────────────────────
+function animateCount(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const decimal = parseInt(el.dataset.decimal || 0);
+  const duration = 1800;
+  const start = performance.now();
+
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const val = Math.round(target * ease);
+    if (decimal === 2) {
+      // 9976 → "99.76"
+      el.textContent = (val / 100).toFixed(2) + suffix;
+    } else {
+      el.textContent = val.toLocaleString() + suffix;
+    }
+    if (progress < 1) requestAnimationFrame(step);
+    else {
+      if (decimal === 2) el.textContent = (target / 100).toFixed(2) + suffix;
+      else el.textContent = target.toLocaleString() + suffix;
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCount(e.target);
+      statObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-num[data-target]').forEach(el => statObserver.observe(el));
+
+// ── FAQ accordion ────────────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

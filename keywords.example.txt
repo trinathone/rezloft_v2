@@ -1,0 +1,35 @@
+# keywords.example.txt
+# Copy this file to keywords.txt and edit it to match your target roles.
+#
+# Rules:
+#   - One keyword per line
+#   - Lines starting with # are comments (ignored)
+#   - Blank lines are ignored
+#   - Keywords are searched IN ORDER and cycle back to the top when exhausted
+
+# ── Core IT / C2C Roles ──
+Python Developer
+Java Developer
+Full Stack Developer
+Backend Developer
+Frontend Developer
+
+# ── Cloud & DevOps ──
+AWS
+Azure
+DevOps Engineer
+Cloud Engineer
+Kubernetes
+
+# ── Data & AI ──
+Data Engineer
+Machine Learning Engineer
+AI Engineer
+Data Scientist
+
+# ── Infrastructure & Security ──
+Site Reliability Engineer
+Network Engineer
+Cybersecurity Analyst
+Salesforce Developer
+SAP Consultant
