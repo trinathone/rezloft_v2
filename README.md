@@ -5,7 +5,7 @@
 <p><strong>Apply to 300 Dice.com jobs per day — automatically, while you sleep.</strong></p>
 
 <img src="https://img.shields.io/badge/version-2.0-2dd4bf?style=flat-square&labelColor=0d1117"/>
-<img src="https://img.shields.io/github/stars/trinathone/rezloft?style=flat-square&color=2dd4bf&labelColor=0d1117"/>
+<img src="https://img.shields.io/github/stars/trinathone/rezloft_v2?style=flat-square&color=2dd4bf&labelColor=0d1117"/>
 <img src="https://img.shields.io/badge/license-GPL--v3-2dd4bf?style=flat-square&labelColor=0d1117"/>
 <img src="https://img.shields.io/badge/platform-Python%203.10%2B-2dd4bf?style=flat-square&labelColor=0d1117"/>
 <img src="https://img.shields.io/badge/CAPTCHAs_triggered-0-2dd4bf?style=flat-square&labelColor=0d1117"/>
@@ -15,6 +15,18 @@
 > **8,202 applications submitted in 10 days. 99.76% success rate. Zero bans.**
 
 </div>
+
+---
+
+## What's New in v2
+
+- **Answers screening questions.** Work authorization, sponsorship, salary, years of experience — configured once in `SCREENING_ANSWERS`, never guessed. A question it doesn't recognize gets logged as `needs_review` instead of silently submitted wrong.
+- **Telegram status reports.** Optional — a digest every 6 hours plus an end-of-day summary of what got applied, what needs your attention, and any fatal errors.
+- **`--dry-run` mode.** Runs the entire pipeline — login, search, open the Apply form — without ever clicking Submit, so you can sanity-check a new keyword list or config change first.
+- **More resilient login.** Recovers automatically if a dropped session lands on a signup page instead of the login form, and fails fast (instead of retrying for 5 minutes) on a genuinely wrong password.
+- **Real company/location data** in `applications.csv`, pulled from Dice's own structured job data instead of leaving those columns blank.
+
+See [Configuration](#configuration) below for how to turn each of these on.
 
 ---
 
@@ -50,8 +62,8 @@ DiceBot logs into your Dice.com account, cycles through keywords you control, an
 
 ```bash
 # 1. Clone and install (≈ 2 min)
-git clone https://github.com/trinathone/rezloft.git
-cd rezloft
+git clone https://github.com/trinathone/rezloft_v2.git
+cd rezloft_v2
 python3 -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 playwright install chromium
@@ -138,7 +150,7 @@ If a required question doesn't match anything here, the bot does **not** guess �
 ```bash
 # On your Oracle Ubuntu VM
 sudo apt update && sudo apt install -y python3-pip python3-venv
-git clone https://github.com/trinathone/rezloft.git && cd rezloft
+git clone https://github.com/trinathone/rezloft_v2.git && cd rezloft_v2
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium --with-deps
@@ -196,7 +208,8 @@ PRs welcome. Check [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 | Label | Task |
 |---|---|
 | `good first issue` | Windows one-click `.bat` installer |
-| `good first issue` | Telegram notification on batch completion |
+| `good first issue` | Login selector fallback chain (see CONTRIBUTING.md) |
+| `good first issue` | File upload support for screening questions |
 | `enhancement` | Indeed Easy Apply support |
 | `enhancement` | ZipRecruiter Easy Apply support |
 | `enhancement` | Web dashboard over `applications.csv` |

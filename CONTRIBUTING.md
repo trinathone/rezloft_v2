@@ -26,18 +26,18 @@ These are well-scoped tasks that don't require deep knowledge of the codebase:
 
 | Issue | Description |
 |---|---|
-| `--dry-run` flag | Add a `--dry-run` CLI flag that logs what it *would* apply to without submitting. Useful for testing keyword coverage. |
 | Windows `.bat` installer | One-click `install.bat` that creates the venv, installs deps, and runs `setup.py`. |
-| Telegram notification | After each batch completes, send a Telegram message with the count and any errors. |
-| Better CSV columns | Pull company name + location from the job detail page (rate-limited, opt-in via config). |
+| Login selector fallback | `_login()` in `dice_bot.py` uses single CSS selectors for the email/password fields with no fallback chain, unlike the job-search selectors which already have one (`JOB_LINK_SELECTORS`). Add the same pattern so a Dice login-page redesign doesn't break auth. |
+| Verify CAPTCHA selectors live | `_detect_block()`'s CAPTCHA selectors have never been confirmed against a real Dice CAPTCHA. If you hit one, capture the DOM and update the selector list. |
+| File upload support | The screening-question handler (`_get_unanswered_questions`) doesn't scan `input[type="file"]` at all, so an application requiring a fresh resume/cover-letter upload silently ends up `stuck` instead of completing. |
 
 ---
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/trinathone/rezloft.git
-cd rezloft
+git clone https://github.com/trinathone/rezloft_v2.git
+cd rezloft_v2
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
@@ -55,11 +55,12 @@ DEBUG=true python3 dice_bot.py
 ## Project Layout
 
 ```
-rezloft/
+rezloft_v2/
 ├── dice_bot.py          # Main bot — Playwright browser automation
-├── config.py            # All tunable settings
-├── utils.py             # Helpers: logging, mouse movement, form filling, CSV tracker
+├── config.py            # All tunable settings, including SCREENING_ANSWERS
+├── utils.py             # Helpers: logging, mouse movement, form filling, CSV tracker, Telegram
 ├── setup.py             # Interactive setup wizard
+├── test_utils.py        # Unit tests for the pure logic in utils.py
 ├── keywords.txt         # Your keyword list (git-ignored)
 ├── keywords.example.txt # Starter keywords
 ├── requirements.txt
