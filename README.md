@@ -141,6 +141,25 @@ If a required question doesn't match anything here, the bot does **not** guess �
 | `SLEEP_HOUR_END` | `3` | Bot wakes at this hour |
 | `HEADLESS` | `False` | Set `True` for server deploys |
 
+### Running more than one account on one machine
+
+Two copies of the bot started from the same folder would fight over the same
+Chromium profile lock and overwrite each other's history. Set `INSTANCE` in each
+copy's `.env` and every per-run file gets namespaced automatically:
+
+```bash
+# copy 1 — .env has no INSTANCE (or INSTANCE=)
+browser_data/    applications.csv            dice_bot.log
+
+# copy 2 — .env has INSTANCE=account2
+browser_data_account2/   applications_account2.csv   dice_bot_account2.log
+```
+
+`INSTANCE` also becomes the Telegram message prefix (`[account2] ...`), so both
+instances can report into the same chat and stay readable. Leave it blank and
+nothing changes — the original filenames are used, so existing setups keep their
+application history.
+
 ---
 
 ## Run 24/7 for Free (Oracle Cloud)

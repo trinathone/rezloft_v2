@@ -3,6 +3,9 @@ Unit tests for the pure logic in utils.py (no browser needed).
 Run: python3 test_utils.py
 """
 
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -52,6 +55,45 @@ class TestApplicationTracker(unittest.TestCase):
         self.tracker.log("C", "", "", "u3", "failed")
         summary = self.tracker.summary()
         self.assertEqual(summary, {"applied": 1, "skipped": 1, "failed": 1})
+
+
+class TestInstanceIsolation(unittest.TestCase):
+    """config.py derives per-instance paths at import time, so these run in a
+    subprocess to avoid polluting the already-imported config module."""
+
+    def _paths_for(self, instance_value):
+        code = (
+            "import config as c; "
+            "print(c.BROWSER_PROFILE_DIR.name, c.CSV_LOG.name, c.LOG_FILE.name, repr(c.BOT_LABEL))"
+        )
+        env = {**os.environ, "INSTANCE": instance_value}
+        env.pop("BOT_LABEL", None)
+        result = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True, text=True,
+            cwd=str(Path(__file__).parent), env=env,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return result.stdout.strip().split()
+
+    def test_blank_instance_keeps_original_paths(self):
+        profile, csv, log, label = self._paths_for("")
+        self.assertEqual(profile, "browser_data")
+        self.assertEqual(csv, "applications.csv")
+        self.assertEqual(log, "dice_bot.log")
+        self.assertEqual(label, "''")
+
+    def test_named_instance_gets_separate_paths(self):
+        profile, csv, log, label = self._paths_for("account2")
+        self.assertEqual(profile, "browser_data_account2")
+        self.assertEqual(csv, "applications_account2.csv")
+        self.assertEqual(log, "dice_bot_account2.log")
+        self.assertEqual(label, "'account2'")
+
+    def test_path_traversal_is_stripped(self):
+        profile, csv, _, _ = self._paths_for("../../etc/passwd")
+        self.assertEqual(profile, "browser_data_etcpasswd")
+        self.assertEqual(csv, "applications_etcpasswd.csv")
 
 
 if __name__ == "__main__":

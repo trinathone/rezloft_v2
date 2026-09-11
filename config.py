@@ -1,12 +1,23 @@
 """
 Bot 1 Configuration — Full Time + Easy Apply, max throughput.
 """
+import re
 import sys
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# ── Instance Isolation ───────────────────────────────────────
+# To run several copies of this bot on one machine (e.g. one per Dice
+# account), set INSTANCE=<name> in each copy's .env. Each instance then
+# gets its own browser profile, CSV, and log file, so they never fight
+# over the same Chromium profile lock or overwrite each other's history.
+# Blank (the default) keeps the original single-instance filenames.
+# Stripped to [A-Za-z0-9_-] because it's interpolated into file paths.
+INSTANCE = re.sub(r"[^A-Za-z0-9_-]", "", os.getenv("INSTANCE", "").strip())
+_SUFFIX = f"_{INSTANCE}" if INSTANCE else ""
 
 # ── Credentials ──────────────────────────────────────────────
 DICE_EMAIL    = os.getenv("DICE_EMAIL", "")
@@ -64,13 +75,13 @@ SLEEP_HOUR_START = 2   # 2am
 SLEEP_HOUR_END   = 3   # 3am — only 1 hour break
 
 # ── Browser ──────────────────────────────────────────────────
-BROWSER_PROFILE_DIR = Path(__file__).parent / "browser_data"
+BROWSER_PROFILE_DIR = Path(__file__).parent / f"browser_data{_SUFFIX}"
 HEADLESS            = False
 PROXY               = os.getenv("PROXY", "")
 
 # ── Logging ──────────────────────────────────────────────────
-LOG_FILE = Path(__file__).parent / "dice_bot.log"
-CSV_LOG  = Path(__file__).parent / "applications.csv"
+LOG_FILE = Path(__file__).parent / f"dice_bot{_SUFFIX}.log"
+CSV_LOG  = Path(__file__).parent / f"applications{_SUFFIX}.csv"
 DEBUG    = os.getenv("DEBUG", "false").lower() == "true"
 
 # ── Dry Run ──────────────────────────────────────────────────
@@ -119,10 +130,10 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "")
 TELEGRAM_REPORT_HOURS = 6   # how often the status digest is sent
 
-# Optional label prefixed to every Telegram message — set this per instance
-# (e.g. BOT_LABEL=Account2 in that copy's .env) if multiple isolated copies
-# of this bot share the same Telegram chat, so messages stay distinguishable.
-BOT_LABEL = os.getenv("BOT_LABEL", "")
+# Label prefixed to every Telegram message, so multiple instances sharing one
+# chat stay distinguishable. Defaults to INSTANCE — set that and you get both
+# isolated files and labelled notifications from one variable.
+BOT_LABEL = os.getenv("BOT_LABEL", INSTANCE)
 
 # Rough daily application target, used only to estimate "how many more
 # expected today" in the Telegram digest. Set by setup.py's speed preset.
