@@ -29,7 +29,6 @@ These are well-scoped tasks that don't require deep knowledge of the codebase:
 | Windows `.bat` installer | One-click `install.bat` that creates the venv, installs deps, and runs `setup.py`. |
 | Login selector fallback | `_login()` in `dice_bot.py` uses single CSS selectors for the email/password fields with no fallback chain, unlike the job-search selectors which already have one (`JOB_LINK_SELECTORS`). Add the same pattern so a Dice login-page redesign doesn't break auth. |
 | Verify CAPTCHA selectors live | `_detect_block()`'s CAPTCHA selectors have never been confirmed against a real Dice CAPTCHA. If you hit one, capture the DOM and update the selector list. |
-| File upload support | The screening-question handler (`_get_unanswered_questions`) doesn't scan `input[type="file"]` at all, so an application requiring a fresh resume/cover-letter upload silently ends up `stuck` instead of completing. |
 
 ---
 

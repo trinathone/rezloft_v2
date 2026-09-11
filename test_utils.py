@@ -57,6 +57,36 @@ class TestApplicationTracker(unittest.TestCase):
         self.assertEqual(summary, {"applied": 1, "skipped": 1, "failed": 1})
 
 
+class TestResumePathResolution(unittest.TestCase):
+    """RESUME_PATH is resolved at config import time, so use a subprocess."""
+
+    def _resume_path_for(self, raw_value):
+        code = "import config as c; print('NONE' if c.RESUME_PATH is None else c.RESUME_PATH)"
+        env = {**os.environ, "RESUME_PATH": raw_value}
+        result = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True, text=True,
+            cwd=str(Path(__file__).parent), env=env,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return result.stdout.strip()
+
+    def test_blank_is_none(self):
+        self.assertEqual(self._resume_path_for(""), "NONE")
+
+    def test_relative_resolves_against_project_dir(self):
+        project = Path(__file__).parent.resolve()
+        self.assertEqual(self._resume_path_for("resume.pdf"), str(project / "resume.pdf"))
+
+    def test_absolute_is_left_alone(self):
+        self.assertEqual(self._resume_path_for("/tmp/cv.pdf"), "/tmp/cv.pdf")
+
+    def test_tilde_is_expanded(self):
+        self.assertEqual(
+            self._resume_path_for("~/cv.pdf"), str(Path.home() / "cv.pdf")
+        )
+
+
 class TestInstanceIsolation(unittest.TestCase):
     """config.py derives per-instance paths at import time, so these run in a
     subprocess to avoid polluting the already-imported config module."""

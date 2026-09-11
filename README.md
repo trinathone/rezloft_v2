@@ -26,6 +26,8 @@
 - **`--dry-run` mode.** Runs the entire pipeline — login, search, open the Apply form — without ever clicking Submit, so you can sanity-check a new keyword list or config change first.
 - **More resilient login.** Recovers automatically if a dropped session lands on a signup page instead of the login form, and fails fast (instead of retrying for 5 minutes) on a genuinely wrong password.
 - **Real company/location data** in `applications.csv`, pulled from Dice's own structured job data instead of leaving those columns blank.
+- **Resume uploads.** Attaches `RESUME_PATH` when a form asks for a file directly, and refuses to submit rather than sending an application with no resume.
+- **Multi-account isolation.** `INSTANCE=<name>` gives each copy its own browser profile, CSV, and log, so two accounts can run on one machine without colliding.
 
 See [Configuration](#configuration) below for how to turn each of these on.
 
@@ -114,6 +116,8 @@ Created automatically by `python3 setup.py`. You can also edit it manually:
 | `DEBUG` | ❌ | `true` for verbose logging |
 | `DRY_RUN` | ❌ | `true` to locate Apply buttons without submitting (or pass `--dry-run`) |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | ❌ | Enables the status digest below (set via `setup.py` or manually) |
+| `RESUME_PATH` | ❌ | Resume to attach when a form asks for a direct upload (see below) |
+| `INSTANCE` | ❌ | Namespaces files so multiple accounts can run on one machine (see below) |
 
 ### Telegram Status Digest
 
@@ -133,6 +137,18 @@ SCREENING_ANSWERS = {
 ```
 
 If a required question doesn't match anything here, the bot does **not** guess — it logs the application as `needs_review` in `applications.csv` instead of `applied`, so you never end up submitting a wrong answer on autopilot. Add the missing keyword and rerun; it'll retry automatically since `needs_review` rows aren't treated as applied.
+
+### Resume uploads
+
+Dice's Easy Apply usually reuses the resume already on your profile, but some
+forms ask for a direct upload. Set `RESUME_PATH=~/Documents/resume.pdf` in `.env`
+and the bot attaches that file whenever a form asks for one — including the
+common case where the real `<input type="file">` is hidden behind a styled
+button.
+
+If `RESUME_PATH` is unset or points at a missing file, the bot **refuses to
+submit** and logs the application as `needs_review` rather than sending it
+through with no resume attached.
 
 ### `config.py` — speed & filters
 
@@ -234,7 +250,6 @@ PRs welcome. Check [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 |---|---|
 | `good first issue` | Windows one-click `.bat` installer |
 | `good first issue` | Login selector fallback chain (see CONTRIBUTING.md) |
-| `good first issue` | File upload support for screening questions |
 | `enhancement` | Indeed Easy Apply support |
 | `enhancement` | ZipRecruiter Easy Apply support |
 | `enhancement` | Web dashboard over `applications.csv` |

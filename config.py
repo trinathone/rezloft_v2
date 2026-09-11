@@ -90,6 +90,17 @@ DEBUG    = os.getenv("DEBUG", "false").lower() == "true"
 # `python3 dice_bot.py --dry-run`.
 DRY_RUN = os.getenv("DRY_RUN", "false").lower() == "true"
 
+# ── Resume Upload (optional) ──────────────────────────────────
+# Most Dice Easy Apply forms reuse the resume already on your profile, but
+# some ask for a direct file upload. Point RESUME_PATH at that file and the
+# bot attaches it when a form asks. Relative paths resolve against this
+# folder; "~" is expanded. Leave blank and any application that demands an
+# upload is logged as needs_review instead of being submitted incomplete.
+_resume_raw = os.getenv("RESUME_PATH", "").strip()
+RESUME_PATH = Path(_resume_raw).expanduser() if _resume_raw else None
+if RESUME_PATH and not RESUME_PATH.is_absolute():
+    RESUME_PATH = Path(__file__).parent / RESUME_PATH
+
 # ── Screening Question Answers ────────────────────────────────
 # Easy Apply forms sometimes ask questions (work auth, salary, etc.)
 # before letting you submit. The bot matches these keys against the

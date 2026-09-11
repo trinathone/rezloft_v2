@@ -793,6 +793,21 @@ class DiceBot:
                     out.push({ type: 'text', id: t.id, name: t.name, question: label, required: isRequired(t) });
                 }
 
+                // File inputs are deliberately NOT filtered on visibility: forms
+                // routinely hide the real input behind a styled button, and
+                // set_input_files() works on hidden inputs anyway.
+                for (const f of document.querySelectorAll('input[type="file"]')) {
+                    if (f.files && f.files.length > 0) continue;
+                    let label = '';
+                    if (f.id) {
+                        const lbl = document.querySelector(`label[for="${f.id}"]`);
+                        if (lbl) label = lbl.innerText.trim();
+                    }
+                    if (!label && f.closest('label')) label = f.closest('label').innerText.trim();
+                    if (!label) label = nearestText(f.closest('div,fieldset') || f);
+                    out.push({ type: 'file', id: f.id, name: f.name, question: label, required: isRequired(f) });
+                }
+
                 for (const c of document.querySelectorAll('input[type="checkbox"]')) {
                     if (c.checked || c.offsetParent === null) continue;
                     let label = '';
@@ -818,6 +833,16 @@ class DiceBot:
         unresolved = False
 
         for q in questions:
+            # Handled before the answer lookup: an upload field has no text
+            # answer to match against SCREENING_ANSWERS.
+            if q["type"] == "file":
+                if not await self._attach_resume(q):
+                    unresolved = True
+                    self.unanswered_questions.append(
+                        f"file upload: {q.get('question') or '<unlabeled>'}"
+                    )
+                continue
+
             answer = match_screening_answer(q.get("question", ""), cfg.SCREENING_ANSWERS)
             if answer is None:
                 # Optional unmatched fields are simply left blank. Required ones
@@ -875,6 +900,32 @@ class DiceBot:
             await micro_delay()
 
         return unresolved
+
+    async def _attach_resume(self, q: dict) -> bool:
+        """Attach cfg.RESUME_PATH to a file input. Returns False (caller logs
+        needs_review) if no resume is configured or the path is wrong —
+        better than submitting an application with no resume attached."""
+        if not cfg.RESUME_PATH:
+            logger.warning("Form wants a file upload but RESUME_PATH is not set in .env")
+            return False
+        if not cfg.RESUME_PATH.is_file():
+            logger.warning(f"RESUME_PATH does not point to a file: {cfg.RESUME_PATH}")
+            return False
+
+        locator = (
+            f'#{q["id"]}' if q.get("id")
+            else f'input[type="file"][name="{q.get("name", "")}"]' if q.get("name")
+            else 'input[type="file"]'
+        )
+        try:
+            await self.page.locator(locator).first.set_input_files(
+                str(cfg.RESUME_PATH), timeout=10_000
+            )
+            logger.info(f"Attached resume: {cfg.RESUME_PATH.name}")
+            return True
+        except Exception as e:
+            logger.warning(f"Resume upload failed: {e}")
+            return False
 
     # ── Job Detail Scrape ───────────────────────────────────────
     async def _scrape_job_details(self, job: dict):
