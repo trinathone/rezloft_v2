@@ -7,7 +7,8 @@
 <img src="https://img.shields.io/badge/version-2.0-2dd4bf?style=flat-square&labelColor=0d1117"/>
 <img src="https://img.shields.io/github/stars/trinathone/rezloft_v2?style=flat-square&color=2dd4bf&labelColor=0d1117"/>
 <img src="https://img.shields.io/badge/license-GPL--v3-2dd4bf?style=flat-square&labelColor=0d1117"/>
-<img src="https://img.shields.io/badge/platform-Python%203.10%2B-2dd4bf?style=flat-square&labelColor=0d1117"/>
+<img src="https://img.shields.io/badge/platform-Python%203.11%2B-2dd4bf?style=flat-square&labelColor=0d1117"/>
+<img src="https://github.com/trinathone/rezloft_v2/actions/workflows/tests.yml/badge.svg"/>
 <img src="https://img.shields.io/badge/CAPTCHAs_triggered-0-2dd4bf?style=flat-square&labelColor=0d1117"/>
 
 <br/><br/>
@@ -71,11 +72,16 @@ playwright install chromium
 # 2. Setup wizard — sets your Dice credentials + keywords + speed
 python3 setup.py
 
-# 3. Run
+# 3. Try it without submitting anything first (recommended)
+python3 dice_bot.py --dry-run
+
+# 4. Run for real
 python3 dice_bot.py
 ```
 
 The bot opens a browser, logs in, and starts applying. Applications are logged to `applications.csv` in real time.
+
+Run `python3 test_utils.py` any time to check the core logic — no browser or Dice account required.
 
 ---
 

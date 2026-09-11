@@ -46,6 +46,12 @@ playwright install chromium
 cp env.example .env
 # Edit .env with your Dice credentials
 
+# Run the tests (no browser or Dice account needed)
+python3 test_utils.py
+
+# Try a full run without submitting anything
+python3 dice_bot.py --dry-run
+
 # Run in DEBUG mode (verbose logging)
 DEBUG=true python3 dice_bot.py
 ```
@@ -71,7 +77,7 @@ rezloft_v2/
 
 ## Code Style
 
-- **Python 3.10+**
+- **Python 3.11+** (enforced by `setup.py`)
 - Follow existing patterns — async/await throughout, `logger` from `utils.py` for all output
 - Keep anti-detection logic in `utils.py`
 - No new dependencies without a good reason — the install is already heavier than ideal
@@ -80,6 +86,7 @@ rezloft_v2/
 
 ## Pull Request Checklist
 
+- [ ] `python3 test_utils.py` passes (CI runs this on every PR)
 - [ ] Tested locally against a real Dice account (or dry-run mode)
 - [ ] No credentials or personal data in the diff
 - [ ] `DEBUG=true` output is clean (no noisy new log lines)
