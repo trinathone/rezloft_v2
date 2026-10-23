@@ -81,6 +81,8 @@ python3 dice_bot.py --dry-run
 python3 dice_bot.py
 ```
 
+**On Linux?** After step 2, run `./run_linux.sh` instead (add `--dry-run` to test). It keeps the machine awake, uses a virtual display when there's no screen (`sudo apt install xvfb`), and restarts the bot if it crashes.
+
 The bot opens a browser, logs in, and starts applying. Applications are logged to `applications.csv` in real time.
 
 Run `python3 test_utils.py` any time to check the core logic — no browser or Dice account required.
@@ -197,9 +199,9 @@ pip install -r requirements.txt
 playwright install chromium --with-deps
 
 python3 setup.py        # configure once
-# set HEADLESS = True in config.py
+sudo apt install -y xvfb  # virtual display, so HEADLESS can stay False
 screen -S dicebot
-python3 dice_bot.py
+./run_linux.sh
 # Ctrl+A D to detach — bot keeps running
 ```
 

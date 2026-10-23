@@ -28,3 +28,6 @@ jobs:
 
       - name: Check all modules import cleanly
         run: python3 -m py_compile config.py utils.py dice_bot.py setup.py test_utils.py
+
+      - name: Check shell scripts parse
+        run: bash -n run.sh && bash -n run_linux.sh

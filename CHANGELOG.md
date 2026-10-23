@@ -3,6 +3,16 @@
 All notable changes to DiceBot. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- **`run_linux.sh`.** One-command launcher for Linux desktops and servers, run
+  after `setup.py`. Creates `.venv` and installs dependencies if missing, keeps
+  the machine awake via `systemd-inhibit`, runs under a virtual display
+  (`xvfb-run`) when there's no screen, and restarts the bot if it crashes.
+  Arguments like `--dry-run` are passed through.
+
 ## [2.0.0]
 
 v2 focuses on not lying about outcomes: an application is only logged as
