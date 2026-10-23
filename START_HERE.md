@@ -106,6 +106,37 @@ python3 dice_bot.py
 
 ---
 
+# 🐧 SETUP FOR LINUX
+
+## Step 1 — Install Python + tools (Linux)
+On Ubuntu/Debian:
+```
+sudo apt update && sudo apt install -y python3 python3-venv python3-pip xvfb
+```
+`xvfb` lets the browser run on servers with no screen (SSH, cloud VMs).
+
+## Step 2 — Run the Setup Wizard (Linux)
+Open a terminal in the project folder, then:
+```
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+playwright install --with-deps chromium
+python3 setup.py
+```
+
+## Step 3 — Run the Bot (Linux)
+```
+./run_linux.sh
+```
+Try `./run_linux.sh --dry-run` first to test without submitting anything.
+
+The script keeps your machine awake, uses a virtual screen if there's no display,
+and restarts the bot automatically if it crashes. Press Ctrl+C to stop.
+
+> 💡 On a server, start it inside `screen -S dicebot` so it keeps running after you log out (Ctrl+A then D to detach).
+
+---
+
 # ❓ Having Issues?
 
 Paste this into Claude.ai or ChatGPT:
